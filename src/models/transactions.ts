@@ -2,7 +2,7 @@
 import { sequelizeConnection, DataTypes, ModelDefined } from "../config/db";
 import { TransactionAttributes, TransactionCreationAttributes } from "../types";
 
-const transaction: ModelDefined<
+const transactions: ModelDefined<
   TransactionAttributes,
   TransactionCreationAttributes
 > = sequelizeConnection.define(
@@ -36,4 +36,4 @@ const transaction: ModelDefined<
   }
 );
 
-export default transaction;
+export default transactions;

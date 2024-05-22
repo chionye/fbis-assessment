@@ -1,9 +1,9 @@
 import user from "./users";
-import transaction from "./transactions";
+import transactions from "./transactions";
 import { sequelizeConnection } from "../config/db";
 
-user.hasMany(transaction, { foreignKey: "uid", sourceKey: "id" });
-transaction.belongsTo(user, { foreignKey: "uid", targetKey: "id" });
+user.hasMany(transactions, { foreignKey: "uid", sourceKey: "id" });
+transactions.belongsTo(user, { foreignKey: "uid", targetKey: "id" });
 
 sequelizeConnection
   .sync()
@@ -14,4 +14,4 @@ sequelizeConnection
     console.log(err);
   });
 
-export { user, transaction };
+export { user, transactions };

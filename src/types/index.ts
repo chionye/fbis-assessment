@@ -28,3 +28,8 @@ export type TransactionCreationAttributes = Optional<
   TransactionAttributes,
   "id"
 >;
+
+export type CustomErrorContent = {
+  message: string;
+  context?: { [key: string]: any };
+};
