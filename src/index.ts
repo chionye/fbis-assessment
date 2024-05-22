@@ -1,7 +1,10 @@
+/** @format */
+
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
-
 dotenv.config();
+
+import { sequelizeConnection } from "./config/db";
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
