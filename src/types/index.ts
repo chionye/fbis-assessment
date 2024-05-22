@@ -7,11 +7,11 @@ export type DBProp = {
 };
 
 export interface UserAttributes {
-  id: number;
+  id?: number;
   name: string;
   email: string;
   password: string;
-  balance: string;
+  balance?: string;
 }
 
 export type UserCreationAttributes = Optional<UserAttributes, "id" | "balance">;
