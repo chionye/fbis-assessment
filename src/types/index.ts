@@ -2,16 +2,16 @@
 
 import { Optional } from "sequelize";
 
-export type DBProp = {
-  [key: string]: any;
+export type RequestAttribute = {
+  [key: string]: string | number
 };
 
-export interface UserAttributes {
+export type UserAttributes = {
   id?: number;
-  name: string;
-  email: string;
-  password: string;
-  balance?: string;
+  name?: string;
+  email?: string;
+  password?: string;
+  balance?: number;
 }
 
 export type UserCreationAttributes = Optional<UserAttributes, "id" | "balance">;
@@ -22,6 +22,7 @@ export interface TransactionAttributes {
   network: string;
   amount: number;
   transaction_ref: string;
+  biller: string;
 }
 
 export type TransactionCreationAttributes = Optional<
@@ -33,3 +34,12 @@ export type CustomErrorContent = {
   message: string;
   context?: { [key: string]: any };
 };
+
+export type RequestPayload = {
+  phone: string;
+  amount: number;
+  service_type: string;
+  plan: string;
+  agentId: string;
+  agentReference: string;
+}

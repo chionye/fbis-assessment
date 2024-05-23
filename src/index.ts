@@ -4,6 +4,7 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import { errorMiddleware } from "./middleware/error";
 import userRouter from "./routes/users";
+import vendorRouter from "./routes/vendor";
 import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
@@ -40,6 +41,8 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/user", userRouter);
+
+app.use("/airtime", vendorRouter);
 
 app.use(errorMiddleware);
 

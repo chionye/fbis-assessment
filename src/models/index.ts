@@ -2,8 +2,8 @@ import user from "./users";
 import transactions from "./transactions";
 import { sequelizeConnection } from "../config/db";
 
-user.hasMany(transactions, { foreignKey: "uid", sourceKey: "id" });
-transactions.belongsTo(user, { foreignKey: "uid", targetKey: "id" });
+user.hasMany(transactions, { foreignKey: "user_id", sourceKey: "id" });
+transactions.belongsTo(user, { foreignKey: "user_id", targetKey: "id" });
 
 sequelizeConnection
   .sync()

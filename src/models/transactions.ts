@@ -26,6 +26,10 @@ const transactions: ModelDefined<
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    biller: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     transaction_ref: {
       type: DataTypes.STRING,
       allowNull: false,

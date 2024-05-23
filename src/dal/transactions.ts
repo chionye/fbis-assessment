@@ -6,7 +6,7 @@ import ErrorHandler from "../helpers/ErrorHandler";
 import { NextFunction, Request, Response } from "express";
 import { sequelizeConnection } from "../config/db";
 
-export const createTransaction = async (
+export const createNewTransaction = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -89,7 +89,7 @@ export const updateTransaction = async (
         })
       );
     }
-    return customResponse(res, "Transaction updated successfully");
+    return result;
   } catch (error: any) {
     return next(
       new ErrorHandler({
