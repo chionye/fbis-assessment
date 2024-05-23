@@ -1,5 +1,3 @@
-/** @format */
-
 import { NextFunction } from "express";
 import { makeRequest } from "../api";
 import { RequestAttribute } from "../types";

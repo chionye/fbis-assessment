@@ -3,7 +3,6 @@
 import { NextFunction } from "express";
 import { makeRequest } from "../api";
 import { RequestAttribute } from "../types";
-import { billerURL } from "../helpers/functions";
 
 export const checkBapBalance = async (amount: number, url: string) => {
   const bapBalance = await makeRequest(
@@ -21,7 +20,7 @@ export const purchaseAirtimeBap = async (
 ) => {
   try {
     const purchase = await makeRequest(url, "POST", "bap", requestBody);
-    console.log(purchase);
+
     if (purchase.code == 200) {
       return { purchase, status: "complete" };
     } else {
