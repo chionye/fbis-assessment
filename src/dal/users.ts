@@ -1,15 +1,18 @@
+/** @format */
+
 import { NextFunction, Request, Response } from "express";
 import { user } from "../models";
 import { customResponse } from "../helpers/customResponse";
 import ErrorHandler from "../helpers/ErrorHandler";
+import { UserAttributes } from "../types";
+import { sequelizeConnection } from "../config/db";
 
-export const createUser = async (
-  req: Request,
+export const create = async (
+  payload: UserAttributes,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const payload = req.body;
     const foundUser = await user.findOne({ where: { email: payload.email } });
 
     if (foundUser) {
@@ -21,10 +24,12 @@ export const createUser = async (
         })
       );
     }
+    const result = sequelizeConnection.transaction(async (t) => {
+      const newUser = await user.create(payload, { transaction: t });
+      return newUser;
+    });
 
-    const newUser = await user.create(payload);
-
-    if (!newUser) {
+    if (!result) {
       return next(
         new ErrorHandler({
           code: 400,
@@ -34,7 +39,7 @@ export const createUser = async (
       );
     }
 
-    return customResponse(res, "User created successfully", newUser);
+    return customResponse(res, "User created successfully", result);
   } catch (error: any) {
     return next(
       new ErrorHandler({ code: 500, message: error.message, logging: true })
@@ -42,14 +47,13 @@ export const createUser = async (
   }
 };
 
-export const updateUser = async (
-  req: Request,
+export const update = async (
+  id: string,
+  payload: UserAttributes,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const payload = req.body;
-    const { id } = req.params;
     const foundUser = await user.findByPk(id);
 
     if (!foundUser) {
@@ -61,10 +65,15 @@ export const updateUser = async (
         })
       );
     }
+    const result = sequelizeConnection.transaction(async (t) => {
+      const [updated] = await user.update(payload, {
+        where: { id },
+        transaction: t,
+      });
+      return updated;
+    });
 
-    const [updated] = await user.update(payload, { where: { id } });
-
-    if (!updated) {
+    if (!result) {
       return next(
         new ErrorHandler({
           code: 500,

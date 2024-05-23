@@ -4,6 +4,7 @@ import { transactions } from "../models";
 import { customResponse } from "../helpers/customResponse";
 import ErrorHandler from "../helpers/ErrorHandler";
 import { NextFunction, Request, Response } from "express";
+import { sequelizeConnection } from "../config/db";
 
 export const createTransaction = async (
   req: Request,
@@ -26,8 +27,14 @@ export const createTransaction = async (
         })
       );
     }
-    const newTransaction: any = await transactions.create(payload);
-    if (!newTransaction.id) {
+    const result = sequelizeConnection.transaction(async (t) => {
+      const newTransaction: any = await transactions.create(payload, {
+        transaction: t,
+      });
+      return newTransaction;
+    });
+
+    if (!result) {
       return next(
         new ErrorHandler({
           code: 400,
@@ -36,11 +43,7 @@ export const createTransaction = async (
         })
       );
     }
-    return customResponse(
-      res,
-      "transaction updated successfully",
-      newTransaction
-    );
+    return customResponse(res, "transaction updated successfully", result);
   } catch (error: any) {
     return next(
       new ErrorHandler({
@@ -70,10 +73,14 @@ export const updateTransaction = async (
         })
       );
     }
-    const [updatedTransaction] = await transactions.update(payload, {
-      where: { id },
+    const result = sequelizeConnection.transaction(async (t) => {
+      const [updatedTransaction] = await transactions.update(payload, {
+        where: { id },
+        transaction: t,
+      });
+      return updatedTransaction;
     });
-    if (!updatedTransaction) {
+    if (!result) {
       return next(
         new ErrorHandler({
           code: 500,

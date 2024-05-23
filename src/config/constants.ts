@@ -1,4 +1,4 @@
-import { Dialect } from "sequelize";
+/** @format */
 
 const {
   PORT,
@@ -8,7 +8,7 @@ const {
   DB_NAME,
   DB_DRIVER,
   BAP_API_KEY,
-  SHAGGO_API_KEY,
+  SHAGO_API_KEY,
 } = process.env;
 
 export const config = {
@@ -17,9 +17,14 @@ export const config = {
     host: DB_HOST,
     name: DB_NAME as string,
     user: DB_USER as string,
-    password: DB_PASS,
-    driver: DB_DRIVER as Dialect,
+    password: DB_PASS as string,
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
   },
   bap_api: BAP_API_KEY,
-  shaggo_api: SHAGGO_API_KEY,
+  shago_api: SHAGO_API_KEY,
 };
