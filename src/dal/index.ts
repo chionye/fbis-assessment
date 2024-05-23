@@ -38,7 +38,7 @@ export const create = async (
         })
       );
     }
-    
+
     await transaction.commit();
 
     return customResponse(res, "User created successfully", newUser);
@@ -65,7 +65,6 @@ export const update = async (id: string, payload: any, next: NextFunction) => {
     }
 
     const remaininigBalance = findUser.balance - payload.amount;
-    console.log(remaininigBalance, id);
     await user.update(
       { balance: remaininigBalance },
       {

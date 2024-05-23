@@ -62,7 +62,7 @@ Test that the application works by visiting
 
 | Parameter          | Type     | Description                                         |
 | :----------------- | :------- | :-------------------------------------------------- |
-| `id`               | `string` | **Required**. Id of user                            |
+| `id`               | `string` | **Required**. Id of user as a param                           |
 | `phone`            | `string` | **Required**. phone number of user                  |
 | `network_provider` | `string` | **Required**. Network provider of user e.g mtn, glo |
 | `amount`           | `integer` | **Required**. airtime amount to be purchased        |
