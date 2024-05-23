@@ -9,6 +9,8 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 
+
+
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
@@ -33,13 +35,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 
-app.get("api/v1/", (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("Server works well");
 });
 
-app.use("api/v1/user", userRouter);
+app.use("/user", userRouter);
 
-app.use("api/v1/airtime", vendorRouter);
+app.use("/airtime", vendorRouter);
 
 app.use(errorMiddleware);
 
