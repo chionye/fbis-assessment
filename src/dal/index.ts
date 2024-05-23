@@ -12,6 +12,8 @@ export const create = async (
   res: Response,
   next: NextFunction
 ) => {
+  const transaction = await sequelizeConnection.transaction();
+
   try {
     const foundUser = await user.findOne({ where: { email: payload.email } });
 
@@ -24,12 +26,10 @@ export const create = async (
         })
       );
     }
-    const result = sequelizeConnection.transaction(async (t) => {
-      const newUser = await user.create(payload, { transaction: t });
-      return newUser;
-    });
 
-    if (!result) {
+    const newUser = await user.create(payload, { transaction });
+
+    if (!newUser) {
       return next(
         new ErrorHandler({
           code: 400,
@@ -38,20 +38,19 @@ export const create = async (
         })
       );
     }
+    
+    await transaction.commit();
 
-    return customResponse(res, "User created successfully", result);
+    return customResponse(res, "User created successfully", newUser);
   } catch (error: any) {
+    await transaction.rollback();
     return next(
       new ErrorHandler({ code: 500, message: error.message, logging: true })
     );
   }
 };
 
-export const update = async (
-  id: string,
-  payload: any,
-  next: NextFunction
-) => {
+export const update = async (id: string, payload: any, next: NextFunction) => {
   const transaction = await sequelizeConnection.transaction();
   try {
     const findUser: any = await user.findByPk(id, { transaction });
@@ -75,7 +74,6 @@ export const update = async (
         },
       }
     );
-    console.log(payload);
 
     await transactions.create(
       {
@@ -83,7 +81,7 @@ export const update = async (
         network: payload.network,
         amount: payload.amount,
         transaction_ref: payload.ref,
-        biller: payload.biller
+        biller: payload.biller,
       },
       { transaction }
     );

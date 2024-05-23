@@ -43,3 +43,5 @@ export type RequestPayload = {
   agentId: string;
   agentReference: string;
 }
+
+export type billerAttributes = "bap" | "shago";

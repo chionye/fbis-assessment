@@ -33,6 +33,7 @@ const transactions: ModelDefined<
     transaction_ref: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true
     },
   },
   {

@@ -1,7 +1,6 @@
 /** @format */
 
 import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
 import { errorMiddleware } from "./middleware/error";
 import userRouter from "./routes/users";
 import vendorRouter from "./routes/vendor";
@@ -10,7 +9,7 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 
-dotenv.config();
+
 
 const app: Express = express();
 const port = process.env.PORT || 3000;

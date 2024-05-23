@@ -3,16 +3,19 @@
 import { NextFunction } from "express";
 import { makeRequest } from "../api";
 import ErrorHandler from "./ErrorHandler";
+import { config } from "../config/constants";
+import { billerAttributes } from "../types";
 
 export const billerURL = (biller: "shago" | "bap") => {
+  const { shago_url, bap_url } = config;
   return biller === "shago"
-    ? "http://test.shagopayments.com/public/api/test/b2b"
-    : "https://api.staging.baxibap.com/services/airtime/request";
+    ? shago_url
+    : `${bap_url}/airtime/request`;
 };
 
 export const handleBapPurchase = async (
   url: string,
-  biller: "bap" | "shago",
+  biller: billerAttributes,
   requestBody: any,
   next: NextFunction
 ) => {

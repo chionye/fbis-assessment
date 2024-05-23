@@ -4,9 +4,10 @@ import { NextFunction, Response, Request } from "express";
 import { makeRequest } from "../api";
 import { customResponse } from "../helpers/customResponse";
 import ErrorHandler from "../helpers/ErrorHandler";
-import { checkUserBalance, update } from "../dal/users";
-import { RequestAttribute } from "../types";
+import { checkUserBalance, update } from "../dal";
+import { RequestAttribute, billerAttributes } from "../types";
 import { billerURL, handleBapPurchase } from "../helpers/functions";
+import { config } from "../config/constants";
 
 export const purchaseAirtime = async (
   req: Request,
@@ -16,6 +17,7 @@ export const purchaseAirtime = async (
   try {
     const { id } = req.params;
     const payload = req.body;
+    const { shago_url, bap_url } = config;
 
     // Check user balance
     const user = await checkUserBalance(id, payload, res, next);
@@ -24,21 +26,18 @@ export const purchaseAirtime = async (
     const amount = parseInt(payload.amount);
     const data = JSON.stringify({ serviceCode: "BAL" });
 
-    let biller: "bap" | "shago" = "shago";
+    let biller: billerAttributes = "shago";
     let shagoBalance, bapBalance;
 
     // Check shago balance
-    shagoBalance = await makeRequest(
-      "http://test.shagopayments.com/public/api/test/b2b",
-      "POST",
-      "shago",
-      data
-    );
+    shagoBalance = await makeRequest(shago_url, "POST", "shago", data);
+
+    console.log(shagoBalance);
 
     if (!shagoBalance || shagoBalance.wallet.primaryBalance < amount) {
       // Check bap balance if shago balance is insufficient
       bapBalance = await makeRequest(
-        "https://api.staging.baxibap.com/services/superagent/account/balance",
+        `${bap_url}/superagent/account/balance`,
         "GET",
         "bap"
       );
@@ -55,7 +54,7 @@ export const purchaseAirtime = async (
       }
     }
 
-    // Prepare request body
+    // Prepare request body for shago and bap
     const shagoRequestBody: RequestAttribute = {
       serviceCode: "QAB",
       phone: payload.phone,
@@ -74,7 +73,7 @@ export const purchaseAirtime = async (
       agentReference: Date.now().toString(),
     };
 
-    let airtimeData: { purchase: any; status: string } = {
+    let purchaseData: { purchase: any; status: string } = {
       purchase: "",
       status: "incomplete",
     };
@@ -88,11 +87,10 @@ export const purchaseAirtime = async (
     );
 
     if (biller === "shago") {
-      if (purchase.status === 200) {
-        airtimeData.purchase = purchase;
-        airtimeData.status = "complete";
-      } else if (purchase.status === 400) {
-        console.log("test");
+      if (purchase.status == 200) {
+        purchaseData.purchase = purchase;
+        purchaseData.status = "complete";
+      } else if (purchase.status == 400) {
         const pollInterval = 5000;
         const maxRetries = 12;
         let retries = 0;
@@ -110,11 +108,11 @@ export const purchaseAirtime = async (
 
           retries++;
 
-          if (requeryShago.status === 200 || retries >= maxRetries) {
+          if (requeryShago.status == 200 || retries >= maxRetries) {
             clearInterval(intervalId);
-            if (requeryShago.status === 200) {
-              airtimeData.purchase = requeryShago;
-              airtimeData.status = "complete";
+            if (requeryShago.status == 200) {
+              purchaseData.purchase = requeryShago;
+              purchaseData.status = "complete";
             } else {
               biller = "bap";
               const bapPurchase: any = await handleBapPurchase(
@@ -123,8 +121,8 @@ export const purchaseAirtime = async (
                 bapRequestBody,
                 next
               );
-              airtimeData.purchase = bapPurchase.purchase;
-              airtimeData.status = bapPurchase.status;
+              purchaseData.purchase = bapPurchase.purchase;
+              purchaseData.status = bapPurchase.status;
             }
           }
         }, pollInterval);
@@ -136,8 +134,8 @@ export const purchaseAirtime = async (
           bapRequestBody,
           next
         );
-        airtimeData.purchase = bapPurchase.purchase;
-        airtimeData.status = bapPurchase.status;
+        purchaseData.purchase = bapPurchase.purchase;
+        purchaseData.status = bapPurchase.status;
       }
     } else {
       const bapPurchase: any = await handleBapPurchase(
@@ -146,18 +144,17 @@ export const purchaseAirtime = async (
         bapRequestBody,
         next
       );
-      airtimeData.purchase = bapPurchase.purchase;
-      airtimeData.status = bapPurchase.status;
+      purchaseData.purchase = bapPurchase.purchase;
+      purchaseData.status = bapPurchase.status;
     }
 
-    console.log(airtimeData, biller);
-    if (airtimeData.status === "complete") {
+    if (purchaseData.status === "complete") {
       const transactionData = {
         network: payload.network_provider.toUpperCase(),
         amount: payload.amount,
         ref:
-          airtimeData.purchase.transId ||
-          airtimeData.purchase.data.transactionReference,
+          purchaseData.purchase.transId ||
+          purchaseData.purchase.data.transactionReference,
         biller,
       };
       const result = await update(id, transactionData, next);
@@ -165,7 +162,7 @@ export const purchaseAirtime = async (
         return customResponse(
           res,
           "airtime purchased successfully",
-          airtimeData.purchase
+          purchaseData.purchase
         );
       }
     }
