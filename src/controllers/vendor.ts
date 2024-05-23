@@ -32,8 +32,6 @@ export const purchaseAirtime = async (
     // Check shago balance
     shagoBalance = await makeRequest(shago_url, "POST", "shago", data);
 
-    console.log(shagoBalance);
-
     if (!shagoBalance || shagoBalance.wallet.primaryBalance < amount) {
       // Check bap balance if shago balance is insufficient
       bapBalance = await makeRequest(
