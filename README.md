@@ -65,7 +65,7 @@ Test that the application works by visiting
 | `id`               | `string` | **Required**. Id of user                            |
 | `phone`            | `string` | **Required**. phone number of user                  |
 | `network_provider` | `string` | **Required**. Network provider of user e.g mtn, glo |
-| `amount`           | `string` | **Required**. airtime amount to be purchased        |
+| `amount`           | `integer` | **Required**. airtime amount to be purchased        |
 
 ## Authors
 
