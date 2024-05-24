@@ -22,9 +22,9 @@ export const purchaseAirtime = async (
 
     // Check user balance
     const user = await checkUserBalance(id, payload, res, next);
-    if (!user) return;
 
     const amount = parseInt(payload.amount);
+    const network_provider = payload.network_provider;
 
     let biller: billerAttributes = "shago";
     let balanceCheck: boolean;
@@ -54,14 +54,14 @@ export const purchaseAirtime = async (
       phone: payload.phone,
       amount: amount.toString(),
       vend_type: "VTU",
-      network: payload.network_provider.toUpperCase(),
+      network: network_provider.toUpperCase(),
       request_id: Date.now().toString(),
     };
 
     const bapRequestBody: RequestAttribute = {
       phone: payload.phone,
       amount: amount,
-      service_type: payload.network_provider.toLowerCase(),
+      service_type: network_provider.toLowerCase(),
       plan: "prepaid",
       agentId: "205",
       agentReference: Date.now().toString(),
@@ -97,7 +97,7 @@ export const purchaseAirtime = async (
 
     if (purchaseData.status === "complete") {
       const transactionData = {
-        network: payload.network_provider.toUpperCase(),
+        network: network_provider.toUpperCase(),
         amount: payload.amount,
         ref:
           purchaseData.purchase.transId ||
@@ -106,10 +106,11 @@ export const purchaseAirtime = async (
       };
       const result = await update(id, transactionData, next);
       if (result) {
+        const { biller, ...responseData } = transactionData;
         return customResponse(
           res,
-          "airtime purchased successfully",
-          purchaseData.purchase
+          `airtime purchased successfully`,
+          responseData
         );
       }
     } else {
