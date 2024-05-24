@@ -3,7 +3,7 @@
 import { Optional } from "sequelize";
 
 export type RequestAttribute = {
-  [key: string]: string | number
+  [key: string]: any;
 };
 
 export type UserAttributes = {
@@ -12,7 +12,7 @@ export type UserAttributes = {
   email?: string;
   password?: string;
   balance?: number;
-}
+};
 
 export type UserCreationAttributes = Optional<UserAttributes, "id" | "balance">;
 
@@ -42,6 +42,11 @@ export type RequestPayload = {
   plan: string;
   agentId: string;
   agentReference: string;
-}
+};
 
-export type billerAttributes = "bap" | "shago";
+export type payloadAttributes = {
+  purchase: any;
+  status: string;
+  message?: string;
+  data?: { [key: string]: any };
+};

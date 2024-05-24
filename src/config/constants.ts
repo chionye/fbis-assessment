@@ -7,7 +7,6 @@ const {
   DB_USER,
   DB_PASS,
   DB_NAME,
-  DB_DRIVER,
   BAP_API_KEY,
   SHAGO_API_KEY,
   SHAGO_URL,
@@ -32,4 +31,5 @@ export const config = {
   shago_api: SHAGO_API_KEY,
   bap_url: BAP_URL || "https://api.staging.baxibap.com/services",
   shago_url: SHAGO_URL || "http://test.shagopayments.com/public/api/test/b2b",
+  billers: ["shago", "bap"]
 };

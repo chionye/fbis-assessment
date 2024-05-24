@@ -4,18 +4,15 @@ import { NextFunction } from "express";
 import { makeRequest } from "../api";
 import ErrorHandler from "./ErrorHandler";
 import { config } from "../config/constants";
-import { billerAttributes } from "../types";
 
-export const billerURL = (biller: "shago" | "bap") => {
+export const billerURL = (biller: string) => {
   const { shago_url, bap_url } = config;
-  return biller === "shago"
-    ? shago_url
-    : `${bap_url}/airtime/request`;
+  return biller === "shago" ? shago_url : `${bap_url}/airtime/request`;
 };
 
 export const handleBapPurchase = async (
   url: string,
-  biller: billerAttributes,
+  biller: string,
   requestBody: any,
   next: NextFunction
 ) => {
