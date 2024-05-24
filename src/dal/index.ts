@@ -29,16 +29,6 @@ export const create = async (
 
     const newUser = await user.create(payload, { transaction });
 
-    if (!newUser) {
-      return next(
-        new ErrorHandler({
-          code: 400,
-          message: "User not created",
-          logging: true,
-        })
-      );
-    }
-
     await transaction.commit();
 
     return customResponse(res, "User created successfully", newUser);
