@@ -1,4 +1,3 @@
-/** @format */
 
 import axios, { Method } from "axios";
 import { config } from "../config/constants";
