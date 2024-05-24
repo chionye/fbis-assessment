@@ -1,7 +1,6 @@
 /** @format */
 
 import { NextFunction, Response, Request } from "express";
-import { makeRequest } from "../api";
 import { customResponse } from "../helpers/customResponse";
 import ErrorHandler from "../helpers/ErrorHandler";
 import { checkUserBalance, update } from "../dal";

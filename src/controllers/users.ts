@@ -1,5 +1,3 @@
-/** @format */
-
 import { NextFunction, Response, Request } from "express";
 import { create } from "../dal";
 

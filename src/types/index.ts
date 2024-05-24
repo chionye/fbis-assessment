@@ -48,5 +48,6 @@ export type payloadAttributes = {
   purchase: any;
   status: string;
   message?: string;
+  reason?: string;
   data?: { [key: string]: any };
 };
