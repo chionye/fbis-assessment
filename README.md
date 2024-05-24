@@ -57,7 +57,7 @@ Test that the application works by visiting
 #### Purchase Airtime
 
 ```http
-  POST /airtime/purchase/1${id}
+  POST /airtime/purchase/${id}
 ```
 
 | Parameter          | Type     | Description                                         |
