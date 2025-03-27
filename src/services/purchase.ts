@@ -1,4 +1,3 @@
-/** @format */
 
 import { NextFunction } from "express";
 import { RequestAttribute, payloadAttributes } from "../types";

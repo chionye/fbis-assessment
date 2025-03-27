@@ -1,6 +1,6 @@
 /** @format */
 
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { user, transactions } from "../models";
 import { customResponse } from "../helpers/customResponse";
 import ErrorHandler from "../helpers/ErrorHandler";
@@ -41,7 +41,6 @@ export const create = async (
 };
 
 export const update = async (id: string, payload: any, next: NextFunction) => {
-  console.log(payload);
   const transaction = await sequelizeConnection.transaction();
   try {
     const findUser: any = await user.findByPk(id, { transaction });
